@@ -1,0 +1,10 @@
+{
+  "emailSubject": "BrainstormSession application logs",
+  "enableSsl": "true",
+  "fromEmail": "debugttest@gmail.com",
+  "mailServer": "smtp.gmail.com",
+  "userName": "debugttest@gmail.com",
+  "password": "soap1test",
+  "port": "465",
+  "toEmail": "fanchana@yandex.ru"
+}
