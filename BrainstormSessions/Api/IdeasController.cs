@@ -6,6 +6,7 @@ using BrainstormSessions.ClientModels;
 using BrainstormSessions.Core.Interfaces;
 using BrainstormSessions.Core.Model;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace BrainstormSessions.Api
 {
@@ -25,6 +26,8 @@ namespace BrainstormSessions.Api
             var session = await _sessionRepository.GetByIdAsync(sessionId);
             if (session == null)
             {
+                Log.Error($"Session #{sessionId} was not found.");
+
                 return NotFound(sessionId);
             }
 
@@ -44,12 +47,14 @@ namespace BrainstormSessions.Api
         {
             if (!ModelState.IsValid)
             {
+                Log.Error($"Invalid model {model.Name}: {ModelState.ValidationState}.");
                 return BadRequest(ModelState);
             }
 
             var session = await _sessionRepository.GetByIdAsync(model.SessionId);
             if (session == null)
             {
+                Log.Error($"Session was not found.");
                 return NotFound(model.SessionId);
             }
 
@@ -62,6 +67,8 @@ namespace BrainstormSessions.Api
             session.AddIdea(idea);
 
             await _sessionRepository.UpdateAsync(session);
+
+            Log.Information($"Idea #{idea.Id} '{idea.Name}' was added to the session #{session.Id}.");
 
             return Ok(session);
         }
@@ -77,6 +84,7 @@ namespace BrainstormSessions.Api
 
             if (session == null)
             {
+                Log.Error($"Session {session.Id} was not found.");
                 return NotFound(sessionId);
             }
 
@@ -101,6 +109,7 @@ namespace BrainstormSessions.Api
         {
             if (!ModelState.IsValid)
             {
+                Log.Error($"IdeasController.CreateActionResult: Invalid model.");
                 return BadRequest(ModelState);
             }
 
@@ -108,6 +117,7 @@ namespace BrainstormSessions.Api
 
             if (session == null)
             {
+                Log.Error($"Session #{session.Id} was not found.");
                 return NotFound(model.SessionId);
             }
 
@@ -120,6 +130,8 @@ namespace BrainstormSessions.Api
             session.AddIdea(idea);
 
             await _sessionRepository.UpdateAsync(session);
+
+            Log.Information($"Session #{session.Id} was created.");
 
             return CreatedAtAction(nameof(CreateActionResult), new { id = session.Id }, session);
         }
