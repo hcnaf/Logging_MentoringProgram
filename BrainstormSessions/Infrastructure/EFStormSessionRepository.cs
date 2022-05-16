@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BrainstormSessions.Core.Interfaces;
 using BrainstormSessions.Core.Model;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace BrainstormSessions.Infrastructure
 {
@@ -13,7 +15,16 @@ namespace BrainstormSessions.Infrastructure
 
         public EFStormSessionRepository(AppDbContext dbContext)
         {
-            _dbContext = dbContext;
+            Log.Debug("Start db initialization.");
+            try
+            {
+                //Бешенная логика инициализации
+                _dbContext = dbContext ?? throw new InvalidOperationException();
+            }
+            catch
+            {
+                Log.Fatal("Db initialization failed.");
+            }
         }
 
         public Task<BrainstormSession> GetByIdAsync(int id)
